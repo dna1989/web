@@ -1,0 +1,466 @@
+/* ==========================================================================
+   SACRED LIFE BY PINKI — HIGH-PERFORMANCE GPU-ACCELERATED DARK SANCTUM
+   Optimized for 60-120fps Smooth Scrolling: Zero Fullscreen Repaints,
+   Compositor-Only Animations, Lightweight Volumetric Gradients
+   ========================================================================== */
+
+:root {
+  --bg-abyss: #030201;            /* Infinite Dark Garbhagriha Void */
+  --bg-sanctum: #070402;          /* Deep Obsidian Stone Shadow */
+  --text-primary: #FAF2E6;        /* Silk Ivory */
+  --text-secondary: #C4AF93;      /* Warm Incense Smoke Buff */
+  --text-muted: #7D6A53;          /* Muted Temple Ash */
+  --diya-amber: #FF8A1E;          /* Living Ghee Flame Orange-Gold */
+  --diya-gold: #F3BC52;           /* Molten Temple Gold */
+  --diya-crimson: #D93822;        /* Sacred Kumkum Ember */
+  --diya-glow-alpha: 0.26;
+}
+
+html.sunlit-courtyard {
+  --bg-abyss: #0D0805;
+  --bg-sanctum: #150C07;
+  --diya-glow-alpha: 0.38;
+}
+
+* {
+  box-sizing: border-box;
+  border-color: transparent;
+}
+
+html {
+  background-color: var(--bg-abyss);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  scroll-behavior: smooth;
+}
+
+/* ==========================================================================
+   STATIC GPU-FRIENDLY DARK TEMPLE ENVIRONMENT (ZERO REPAINT ON SCROLL/MOUSE)
+   ========================================================================== */
+body {
+  background-color: var(--bg-abyss);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  position: relative;
+  background-image:
+    radial-gradient(ellipse 80% 45% at 50% 8%, rgba(255, 130, 20, var(--diya-glow-alpha)) 0%, rgba(180, 45, 15, 0.06) 50%, transparent 80%),
+    radial-gradient(circle at 18% 36%, rgba(255, 140, 25, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 82% 55%, rgba(243, 188, 82, 0.07) 0%, transparent 45%);
+}
+
+/* Background Canvas for Floating Golden Diya Sparks */
+#temple-atmosphere-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+header, section, footer, .sutra-marquee-wrap {
+  position: relative;
+  z-index: 10;
+}
+
+/* Browser Layout & Paint Containment for Below-the-Fold Sections */
+section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 900px;
+}
+
+.mandapa-pillar-left,
+.mandapa-pillar-right,
+.padma-frieze,
+.gopuram-crown {
+  display: none !important;
+}
+
+/* ==========================================================================
+   DIVINE TYPOGRAPHY & LIQUID GOLD GRADIENTS
+   ========================================================================== */
+.font-serif-display,
+.font-serif {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-temple-caps,
+.font-display {
+  font-family: 'Cinzel', 'Cormorant Garamond', serif;
+  letter-spacing: 0.22em;
+}
+
+.chiseled-text {
+  text-shadow: 0 6px 24px rgba(0, 0, 0, 0.9);
+}
+
+.divine-gold-text {
+  background: linear-gradient(135deg, #FFF6D6 0%, #F3BC52 45%, #FF8A1E 85%, #FFF0C2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.drop-cap::first-letter {
+  float: left;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 4.5rem;
+  line-height: 0.78;
+  padding-right: 0.85rem;
+  padding-top: 0.1rem;
+  color: var(--diya-gold);
+  font-weight: 400;
+}
+
+/* ==========================================================================
+   BORDERLESS VOLUMETRIC SURFACES (NO EXPENSIVE BACKDROP-BLUR ON CARDS)
+   ========================================================================== */
+.arch-border-t,
+.arch-border-b,
+.arch-border-l,
+.arch-border-r {
+  border: none !important;
+}
+
+.temple-surface,
+.devakoshta-niche {
+  position: relative;
+  border: none !important;
+  border-radius: 28px;
+  background: radial-gradient(
+    120% 120% at 50% 0%,
+    rgba(48, 28, 14, 0.72) 0%,
+    rgba(18, 10, 5, 0.88) 60%,
+    rgba(9, 5, 2, 0.92) 100%
+  );
+  box-shadow:
+    0 20px 45px -15px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 0 rgba(255, 200, 110, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.temple-surface::before,
+.devakoshta-niche::after {
+  display: none !important;
+}
+
+.temple-surface:hover {
+  box-shadow:
+    0 24px 52px -12px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 0 rgba(255, 210, 130, 0.24);
+}
+
+/* Sacred Arch / Apparition Frame */
+.temple-arch-frame {
+  border-radius: 999px 999px 32px 32px;
+  overflow: hidden;
+  position: relative;
+  border: none !important;
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.9);
+}
+
+.temple-arch-double {
+  border-radius: 999px 999px 36px 36px;
+  padding: 0;
+  background: transparent;
+  border: none !important;
+  position: relative;
+}
+
+/* Lightweight Radial Aura Behind Featured Portraits (No CSS Blur Filter) */
+.sanctum-halo-backdrop {
+  position: relative;
+}
+
+.sanctum-halo-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: -15%;
+  background: radial-gradient(
+    circle at 50% 42%,
+    rgba(255, 140, 25, 0.22) 0%,
+    rgba(217, 56, 34, 0.07) 42%,
+    transparent 70%
+  );
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   COMPOSITOR-ONLY LIVING DIYA FLAME PHYSICS (ZERO FILTER DROP-SHADOW REPAINTS)
+   ========================================================================== */
+@keyframes realisticFlameOuter {
+  0%, 100% { transform: scale3d(1, 1, 1) rotate(-1.2deg); }
+  50% { transform: scale3d(0.96, 1.07, 1) rotate(1.4deg); }
+}
+
+@keyframes realisticFlameCore {
+  0%, 100% { transform: scale3d(1, 1, 1); }
+  50% { transform: scale3d(0.94, 1.08, 1); }
+}
+
+@keyframes diyaAuraPulse {
+  0%, 100% { opacity: 0.7; transform: scale3d(1, 1, 1); }
+  50% { opacity: 1; transform: scale3d(1.1, 1.1, 1); }
+}
+
+.diya-card-lit {
+  background: radial-gradient(
+    circle at 50% 35%,
+    rgba(255, 148, 30, 0.32) 0%,
+    rgba(217, 56, 34, 0.12) 48%,
+    rgba(12, 6, 3, 0.85) 90%
+  ) !important;
+  box-shadow:
+    0 16px 40px rgba(255, 130, 15, 0.18),
+    inset 0 1px 0 rgba(255, 215, 130, 0.24) !important;
+}
+
+.diya-lit .diya-flame-outer {
+  transform-origin: 50% 88%;
+  will-change: transform;
+  animation: realisticFlameOuter 1.6s ease-in-out infinite;
+}
+
+.diya-lit .diya-flame-core {
+  transform-origin: 50% 90%;
+  will-change: transform;
+  animation: realisticFlameCore 1.1s ease-in-out infinite;
+}
+
+.diya-lit .diya-halo-glow {
+  transform-origin: center;
+  will-change: transform, opacity;
+  animation: diyaAuraPulse 2.2s ease-in-out infinite;
+}
+
+.diya-lit .ghee-oil-surface {
+  opacity: 1;
+}
+
+/* Shimmering Floor Reflection (Pure Radial Gradient — No CSS Blur) */
+.diya-lit::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 15%;
+  right: 15%;
+  height: 20px;
+  background: radial-gradient(ellipse at center, rgba(255, 155, 35, 0.38) 0%, transparent 72%);
+  pointer-events: none;
+}
+
+.diya-unlit .diya-flame-outer,
+.diya-unlit .diya-flame-core,
+.diya-unlit .diya-halo-glow {
+  opacity: 0;
+  transform: scale3d(0.1, 0.1, 1);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.diya-unlit .ghee-oil-surface {
+  opacity: 0.3;
+}
+
+.wall-diya-sconce {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   HI-TECH DIVINE BUTTONS & CONTROLS
+   ========================================================================== */
+.btn-terracotta {
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #FF9424 0%, #D93822 60%, #9E1F11 100%);
+  color: #FFFBF5;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  box-shadow:
+    0 10px 28px -6px rgba(255, 120, 25, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.btn-terracotta:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 34px -4px rgba(255, 145, 30, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.btn-sandstone {
+  border-radius: 9999px;
+  background: rgba(28, 17, 9, 0.85);
+  color: var(--text-primary);
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(243, 188, 82, 0.22);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.btn-sandstone:hover {
+  color: var(--diya-gold);
+  background: rgba(45, 27, 14, 0.92);
+}
+
+.temple-input {
+  border-radius: 9999px;
+  background-color: rgba(18, 11, 6, 0.9);
+  border: none;
+  box-shadow: inset 0 1px 0 rgba(243, 188, 82, 0.22), 0 8px 24px rgba(0, 0, 0, 0.55);
+  color: var(--text-primary);
+  transition: box-shadow 0.25s ease;
+}
+
+textarea.temple-input {
+  border-radius: 24px;
+}
+
+.temple-input:focus {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 150, 35, 0.6),
+    0 0 20px rgba(255, 140, 25, 0.22);
+}
+
+/* ==========================================================================
+   SACRED ANIMATIONS: BELLS & MARQUEE
+   ========================================================================== */
+@keyframes bellSwing {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(20deg); }
+  40% { transform: rotate(-16deg); }
+  60% { transform: rotate(11deg); }
+  80% { transform: rotate(-6deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.bell-swinging {
+  transform-origin: top center;
+  animation: bellSwing 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes gentleChainSway {
+  0%, 100% { transform: rotate(-1.2deg); }
+  50% { transform: rotate(1.2deg); }
+}
+
+.hanging-ghanta {
+  transform-origin: top center;
+  will-change: transform;
+  animation: gentleChainSway 5s ease-in-out infinite;
+}
+
+@keyframes sutraMarquee {
+  0% { transform: translate3d(0%, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.sutra-marquee-wrap {
+  overflow: hidden;
+  white-space: nowrap;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 138, 30, 0.06) 0%, transparent 80%);
+}
+
+.sutra-marquee-track {
+  display: inline-flex;
+  will-change: transform;
+  animation: sutraMarquee 52s linear infinite;
+}
+
+.sutra-marquee-wrap:hover .sutra-marquee-track {
+  animation-play-state: paused;
+}
+
+/* ==========================================================================
+   3D DIVINE ORACLE TABLET FLIP
+   ========================================================================== */
+.sutra-perspective {
+  perspective: 1500px;
+}
+
+.sutra-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.sutra-card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.sutra-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 32px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.sutra-back {
+  transform: rotateY(180deg);
+}
+
+/* Sound Equalizer Bars */
+.sound-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.sound-bars span {
+  width: 2px;
+  height: 4px;
+  background-color: var(--diya-gold);
+}
+
+.sound-bars.playing span:nth-child(1) { animation: soundPulse 0.8s ease-in-out infinite; }
+.sound-bars.playing span:nth-child(2) { animation: soundPulse 0.6s ease-in-out 0.15s infinite; }
+.sound-bars.playing span:nth-child(3) { animation: soundPulse 0.9s ease-in-out 0.3s infinite; }
+.sound-bars.playing span:nth-child(4) { animation: soundPulse 0.7s ease-in-out 0.45s infinite; }
+
+@keyframes soundPulse {
+  0%, 100% { height: 3px; }
+  50% { height: 12px; }
+}
+
+/* GPU-Composited Volumetric Diya Torchlight & Cursor (`translate3d` Only) */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: #FFAE33;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+  box-shadow: 0 0 14px 4px rgba(255, 145, 25, 0.85);
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 340px;
+  height: 340px;
+  border: none;
+  background: radial-gradient(circle, rgba(255, 140, 25, 0.11) 0%, rgba(217, 56, 34, 0.03) 45%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+  will-change: transform;
+}
