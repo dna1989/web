@@ -751,8 +751,9 @@ function initTempleAtmosphereCanvas() {
     height = canvas.height = window.innerHeight;
   }, { passive: true });
 
-  // Lightweight 16 rising golden diya embers (Zero per-frame gradient allocations)
-  const particles = Array.from({ length: 16 }, () => ({
+  // Lightweight rising golden diya embers (8 on mobile, 16 on desktop for 60fps battery-friendly smoothness)
+  const particleCount = window.innerWidth < 768 ? 8 : 16;
+  const particles = Array.from({ length: particleCount }, () => ({
     x: Math.random() * width,
     y: Math.random() * height,
     r: Math.random() * 1.8 + 0.8,
@@ -789,6 +790,7 @@ function initTempleAtmosphereCanvas() {
 }
 
 function initFlameCursor() {
+  if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
   const dot = document.getElementById('cursor-dot');
   const ring = document.getElementById('cursor-ring');
   if (!dot || !ring) return;
@@ -965,15 +967,15 @@ function initTempleAltarAndBell() {
         <button
           type="button"
           data-diya-id="${diya.id}"
-          class="temple-surface flex flex-col items-center p-4 sm:p-5 transition-all duration-500 ${isLit
+          class="temple-surface last:col-span-2 sm:last:col-span-1 flex flex-col items-center p-3.5 sm:p-5 text-center transition-all duration-500 ${isLit
           ? 'diya-card-lit diya-lit'
           : 'opacity-70 hover:opacity-100 diya-unlit'
         }"
         >
-          ${createRealisticDiyaSVG(diya.id, 'w-20 h-24 mb-1')}
+          ${createRealisticDiyaSVG(diya.id, 'w-16 h-20 sm:w-20 sm:h-24 mb-1')}
           <span class="text-[9px] uppercase tracking-[0.2em] text-[#E8A838] font-semibold">${diya.sanskrit}</span>
-          <span class="font-serif-display text-lg font-semibold mt-0.5 text-[#F7EBD4]">${diya.name}</span>
-          <span class="text-[10px] uppercase tracking-widest mt-1 ${isLit ? 'text-[#FF9922]' : 'text-[#C8B698]'} font-semibold">
+          <span class="font-serif-display text-base sm:text-lg font-semibold mt-0.5 text-[#F7EBD4] leading-snug">${diya.name}</span>
+          <span class="text-[9px] sm:text-[10px] uppercase tracking-widest mt-1 ${isLit ? 'text-[#FF9922]' : 'text-[#C8B698]'} font-semibold">
             ${isLit ? '🪔 Ghee Flame Lit' : 'Touch Wick to Light'}
           </span>
         </button>
@@ -1041,13 +1043,13 @@ function initManifestoAccordion() {
     accordionContainer.innerHTML = MANIFESTO_PILLARS.map((pillar) => {
       const isOpen = pillar.id === activePillarId;
       return `
-        <div class="transition-all duration-500 ${isOpen ? 'py-8 temple-surface px-7 my-4' : 'py-5 px-5 opacity-70 hover:opacity-100'}">
+        <div class="transition-all duration-500 ${isOpen ? 'py-6 sm:py-8 temple-surface px-4 sm:px-7 my-3 sm:my-4' : 'py-4 sm:py-5 px-4 sm:px-5 opacity-70 hover:opacity-100'}">
           <button
             type="button"
             data-accordion-id="${pillar.id}"
             class="w-full text-left flex items-baseline justify-between gap-4 group"
           >
-            <div class="flex items-baseline gap-4 sm:gap-6">
+            <div class="flex items-baseline gap-3 sm:gap-6">
               <span class="font-temple-caps text-lg sm:text-xl ${isOpen ? 'text-[#FF9424] font-bold' : 'opacity-50'
         }">
                 ${pillar.number}
@@ -1068,12 +1070,12 @@ function initManifestoAccordion() {
 
           ${isOpen
           ? `
-            <div class="pl-8 sm:pl-12 pt-6 space-y-6">
+            <div class="pl-2 sm:pl-12 pt-5 sm:pt-6 space-y-5 sm:space-y-6">
               <p class="text-base sm:text-lg leading-relaxed text-[#C4AF93]">
                 ${pillar.shortDesc}
               </p>
 
-              <blockquote class="p-6 rounded-3xl bg-[#FF8A1E]/[0.06] font-serif-display italic text-xl sm:text-2xl text-[#F3BC52]">
+              <blockquote class="p-5 sm:p-6 rounded-3xl bg-[#FF8A1E]/[0.06] font-serif-display italic text-xl sm:text-2xl text-[#F3BC52]">
                 ${pillar.mantra}
               </blockquote>
 
@@ -1095,7 +1097,7 @@ function initManifestoAccordion() {
                 </ul>
               </div>
 
-              <div class="p-5 rounded-2xl bg-[#FF8A1E]/[0.08] text-xs sm:text-sm text-[#FAF2E6]">
+              <div class="p-4 sm:p-5 rounded-2xl bg-[#FF8A1E]/[0.08] text-xs sm:text-sm text-[#FAF2E6]">
                 <strong class="uppercase tracking-widest text-[#FF9424] mr-2">🪔 Diya Contemplation:</strong>
                 <span>${pillar.ritualPractice}</span>
               </div>
@@ -1153,7 +1155,7 @@ function initBehaviourMirror() {
       BEHAVIOUR_MIRROR_CASES.find((c) => c.id === activeCaseId) || BEHAVIOUR_MIRROR_CASES[0];
 
     detailContainer.innerHTML = `
-      <div class="temple-surface p-8 sm:p-12 space-y-8">
+      <div class="temple-surface p-6 sm:p-12 space-y-6 sm:space-y-8">
         <div>
           <span class="text-[10px] uppercase tracking-[0.26em] text-[#FF9424] font-semibold block mb-2">
             PSYCHOLOGICAL & SPIRITUAL ANATOMY
@@ -1163,8 +1165,8 @@ function initBehaviourMirror() {
           </h3>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div class="p-6 rounded-3xl bg-[#FF8A1E]/[0.06] space-y-2">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+          <div class="p-5 sm:p-6 rounded-3xl bg-[#FF8A1E]/[0.06] space-y-2">
             <div class="text-[10px] uppercase tracking-widest text-[#F3BC52] font-bold">
               1. Surface Behaviour
             </div>
@@ -1173,7 +1175,7 @@ function initBehaviourMirror() {
             </p>
           </div>
 
-          <div class="p-6 rounded-3xl bg-[#FF8A1E]/[0.06] space-y-2">
+          <div class="p-5 sm:p-6 rounded-3xl bg-[#FF8A1E]/[0.06] space-y-2">
             <div class="text-[10px] uppercase tracking-widest text-[#FF9424] font-bold">
               2. Their Hidden Wound
             </div>
@@ -1182,7 +1184,7 @@ function initBehaviourMirror() {
             </p>
           </div>
 
-          <div class="p-6 rounded-3xl bg-[#FF8A1E]/[0.06] space-y-2">
+          <div class="p-5 sm:p-6 rounded-3xl bg-[#FF8A1E]/[0.06] space-y-2">
             <div class="text-[10px] uppercase tracking-widest text-[#D93822] font-bold">
               3. Why It Hooks Your Pattern
             </div>
@@ -1192,7 +1194,7 @@ function initBehaviourMirror() {
           </div>
         </div>
 
-        <div class="p-7 rounded-3xl bg-gradient-to-r from-[#FF8A1E]/[0.12] to-transparent space-y-2">
+        <div class="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-[#FF8A1E]/[0.12] to-transparent space-y-2">
           <div class="text-[10px] uppercase tracking-[0.24em] text-[#F3BC52]">
             🪔 Pinki’s Temple Clarity & Response:
           </div>
@@ -1201,14 +1203,14 @@ function initBehaviourMirror() {
           </p>
         </div>
 
-        <div class="pt-2 flex flex-wrap items-center justify-between gap-4">
+        <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <span class="text-xs text-[#C4AF93]">
             Walking through this exact dynamic right now?
           </span>
           <button
             type="button"
             onclick="window.openBookingModal('connection-talk-1on1')"
-            class="btn-terracotta px-7 py-3.5 text-xs font-semibold"
+            class="btn-terracotta w-full sm:w-auto px-7 py-3.5 text-xs font-semibold"
           >
             Talk Through This Pattern with Pinki →
           </button>
@@ -1221,6 +1223,9 @@ function initBehaviourMirror() {
         activeCaseId = btn.getAttribute('data-case-id');
         soundEngine.playChime(528);
         renderMirror();
+        if (window.innerWidth < 1024) {
+          detailContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       });
     });
   }
@@ -1273,7 +1278,7 @@ function initSacredCinemaSection() {
       return `
         <div
           data-reel-idx="${idx}"
-          class="relative rounded-3xl overflow-hidden aspect-[9/16] cursor-pointer group transition-transform duration-300 ${isSelected
+          class="min-w-[145px] sm:min-w-0 snap-center shrink-0 relative rounded-3xl overflow-hidden aspect-[9/16] cursor-pointer group transition-transform duration-300 ${isSelected
           ? 'scale-[1.03] ring-2 ring-[#F3BC52]'
           : 'opacity-70 hover:opacity-100'
         }"
@@ -1305,6 +1310,9 @@ function initSacredCinemaSection() {
         const idx = parseInt(card.getAttribute('data-reel-idx'), 10);
         soundEngine.playChime(528);
         selectReel(idx);
+        if (window.innerWidth < 768) {
+          mainVideo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       });
     });
   }
@@ -1678,22 +1686,22 @@ function initExperienceModal() {
   const modal = document.getElementById('vibe-modal');
   const closeBtn = document.getElementById('vibe-modal-close');
   const toggleSoundBtn = document.getElementById('toggle-ambient-sound-btn');
-  const navSoundBtn = document.getElementById('nav-sound-toggle');
+  const navSoundBtns = document.querySelectorAll('#nav-sound-toggle, [data-toggle-sound]');
 
   if (!modal) return;
 
   function updateSoundUI(playing) {
     const labelEls = document.querySelectorAll('.sound-status-label');
     labelEls.forEach((el) => {
-      el.textContent = playing ? '432Hz Tanpura Drone: ON' : 'Activate 432Hz Tanpura';
+      el.textContent = playing ? '432Hz ON' : '432Hz';
     });
-    if (navSoundBtn) {
+    navSoundBtns.forEach((btn) => {
       if (playing) {
-        navSoundBtn.classList.add('is-playing');
+        btn.classList.add('is-playing');
       } else {
-        navSoundBtn.classList.remove('is-playing');
+        btn.classList.remove('is-playing');
       }
-    }
+    });
   }
 
   function openVibeModal() {
@@ -1730,15 +1738,15 @@ function initExperienceModal() {
     });
   }
 
-  if (navSoundBtn) {
-    navSoundBtn.addEventListener('click', () => {
+  navSoundBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
       const playing = soundEngine.toggleAmbient();
       updateSoundUI(playing);
       showSanctuaryToast(
         playing ? '432Hz Temple Tanpura Drone Activated' : 'Temple Drone Paused'
       );
     });
-  }
+  });
 }
 
 // ==========================================
